@@ -1,0 +1,58 @@
+{
+  "alert": {
+    "name": "Low Test Coverage",
+    "message": "Test coverage has dropped below threshold",
+    "conditions": [
+      {
+        "evaluator": {
+          "params": [80],
+          "type": "lt"
+        },
+        "operator": {
+          "type": "and"
+        },
+        "query": {
+          "params": ["A", "5m", "now"]
+        },
+        "reducer": {
+          "params": [],
+          "type": "last"
+        },
+        "type": "query"
+      }
+    ],
+    "executionErrorState": "alerting",
+    "for": "5m",
+    "frequency": "10s",
+    "handler": 1,
+    "noDataState": "no_data",
+    "notifications": []
+  },
+  "targets": [
+    {
+      "expr": "test_coverage_percentage",
+      "refId": "A"
+    }
+  ],
+  "alertRules": [
+    {
+      "name": "Low Test Coverage (< 80%)",
+      "condition": "test_coverage_percentage < 80",
+      "duration": "5m",
+      "severity": "warning"
+    },
+    {
+      "name": "Critical Test Coverage (< 70%)",
+      "condition": "test_coverage_percentage < 70",
+      "duration": "2m",
+      "severity": "critical"
+    },
+    {
+      "name": "Coverage Drop (> 5% decrease)",
+      "condition": "(test_coverage_percentage - test_coverage_percentage offset 1h) < -5",
+      "duration": "5m",
+      "severity": "warning"
+    }
+  ]
+}
+

@@ -1,0 +1,22 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  evaluation_interval: 15s
+rule_files:
+- prometheus_alerts.yml
+scrape_configs:
+- job_name: coverage-metrics
+  scrape_interval: 15s
+  scrape_timeout: 10s
+  metrics_path: /metrics
+  static_configs:
+  - targets:
+    - localhost:8001
+    labels:
+      service: planner-agent
+      environment: production
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - localhost:9093

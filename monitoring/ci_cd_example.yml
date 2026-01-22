@@ -1,0 +1,64 @@
+# Example GitHub Actions workflow for tracking test coverage
+# Add this to .github/workflows/ci.yml
+
+name: CI with Coverage Tracking
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-track-coverage:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Run tests with coverage
+        run: |
+          pytest --cov=. --cov-report=xml --cov-report=term
+      
+      - name: Record coverage metrics
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python -c "
+          from monitoring.coverage_tracking import track_coverage_from_file
+          track_coverage_from_file(
+              'coverage.xml',
+              test_suite='pytest',
+              commit_hash='${{ github.sha }}',
+              branch_name='${{ github.ref_name }}'
+          )
+          print('Coverage metrics recorded successfully')
+          "
+      
+      # Alternative: Use the CLI command
+      # - name: Record coverage metrics (CLI)
+      #   env:
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: |
+      #     COVERAGE=$(pytest --cov=. --cov-report=term | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+      #     TOTAL=$(pytest --cov=. --cov-report=term | grep TOTAL | awk '{print $2}')
+      #     COVERED=$(echo "$TOTAL * $COVERAGE / 100" | bc)
+      #     python -m monitoring.dashboard_setup record_metric \
+      #       --coverage $COVERAGE \
+      #       --total $TOTAL \
+      #       --covered $COVERED \
+      #       --test-suite "pytest" \
+      #       --commit-hash "${{ github.sha }}" \
+      #       --branch-name "${{ github.ref_name }}"
+

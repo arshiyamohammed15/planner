@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details - Planner Agent</title>
+    <link rel="stylesheet" href="task_display.css">
+</head>
+<body>
+    <div class="task-container">
+        <!-- Task Details Container -->
+        <div id="task-details-container">
+            <div class="loading">Loading task details...</div>
+        </div>
+        
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <div class="comments-header">
+                <h3>Comments</h3>
+                <span class="comments-count" id="comments-count">0 comments</span>
+            </div>
+            <div id="comments-container">
+                <div class="loading">Loading comments...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        window.API_BASE_URL = 'http://localhost:8080';
+        window.CURRENT_USER = 'mk'; // Set from your authentication system
+        window.JWT_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtayIsImlhdCI6MTc2OTA4NTQxMywiZXhwIjoxNzY5MDg5MDEzfQ.yPTlrJiHozhXkwnB56oh6EcYR8YLEUpRfnhnr0-npYY';
+        window.AUTO_REFRESH_COMMENTS = false; // Set to true for auto-refresh
+        
+        // Set task ID (can be from URL parameter or set directly)
+        document.body.setAttribute('data-task-id', new URLSearchParams(window.location.search).get('task_id') || 'task-1');
+    </script>
+    <script src="task_page.js"></script>
+    
+    <script>
+        // Update comments count when comments are loaded
+        const originalRenderComments = window.renderComments;
+        if (originalRenderComments) {
+            window.renderComments = function(comments, containerId, currentUser) {
+                originalRenderComments(comments, containerId, currentUser);
+                const countElement = document.getElementById('comments-count');
+                if (countElement) {
+                    countElement.textContent = `${comments.length} comment${comments.length !== 1 ? 's' : ''}`;
+                }
+            };
+        }
+    </script>
+</body>
+</html>
+
