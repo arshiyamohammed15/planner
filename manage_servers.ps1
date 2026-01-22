@@ -14,8 +14,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 # Configuration
-$ApiPort = 8000
-$FrontendPort = 8080
+$ApiPort = 8080  # API server serves both API and frontend on this port
 $LogFile = "server_manager.log"
 
 function Write-Log {
@@ -125,51 +124,22 @@ function Start-ApiServer {
     }
 }
 
-function Start-FrontendServer {
-    Write-Log "Starting Frontend Server on port $FrontendPort..."
-
-    # Start frontend server using Python's built-in HTTP server
-    $frontendJob = Start-Job -ScriptBlock {
-        param($port)
-        try {
-            # Change to project root directory and serve files
-            Set-Location $using:PWD
-            python -m http.server $port
-        } catch {
-            Write-Host "Frontend Server failed to start: $($_.Exception.Message)"
-        }
-    } -ArgumentList $FrontendPort
-
-    # Wait for frontend server to start
-    Start-Sleep -Seconds 2
-    if (Test-Port -Port $FrontendPort) {
-        Write-Log "Frontend Server started"
-        return $true
-    } else {
-        Write-Log "Frontend Server failed to start" "ERROR"
-        return $false
-    }
-}
+# Frontend is now served by the API server, no separate frontend server needed
 
 function Check-Status {
     Write-Host "=== Server Status ===" -ForegroundColor Cyan
 
-    # Check API server
+    # Check unified API/Frontend server
     if (Test-Port -Port $ApiPort) {
-        Write-Host "✓ API Server: RUNNING on port $ApiPort" -ForegroundColor Green
-    } else {
-        Write-Host "✗ API Server: STOPPED" -ForegroundColor Red
-    }
-
-    # Check Frontend server
-    if (Test-Port -Port $FrontendPort) {
-        Write-Host "✓ Frontend Server: RUNNING on port $FrontendPort" -ForegroundColor Green
-        $processId = Get-ProcessId -Port $FrontendPort
+        Write-Host "✓ API & Frontend Server: RUNNING on port $ApiPort" -ForegroundColor Green
+        $processId = Get-ProcessId -Port $ApiPort
         if ($processId) {
             Write-Host "  Process ID: $processId, Started: $(Get-Date -Format 'MM/dd/yyyy HH:mm:ss')" -ForegroundColor Gray
         }
+        Write-Host "  Frontend URL: http://localhost:$ApiPort/frontend/task_page_example.html" -ForegroundColor Cyan
+        Write-Host "  API Docs: http://localhost:$ApiPort/docs" -ForegroundColor Cyan
     } else {
-        Write-Host "✗ Frontend Server: STOPPED" -ForegroundColor Red
+        Write-Host "✗ API & Frontend Server: STOPPED" -ForegroundColor Red
     }
 
     # Show recent log entries
@@ -183,29 +153,27 @@ function Check-Status {
 }
 
 function Stop-AllServers {
-    Write-Log "Stopping all servers..."
+    Write-Log "Stopping server..."
 
     Stop-Port -Port $ApiPort
-    Stop-Port -Port $FrontendPort
 
-    Write-Log "All servers stopped"
+    Write-Log "Server stopped"
 }
 
 function Start-AllServers {
-    Write-Log "Starting servers..."
+    Write-Log "Starting server..."
 
-    $apiStarted = Start-ApiServer
-    $frontendStarted = Start-FrontendServer
+    $serverStarted = Start-ApiServer
 
-    if ($apiStarted -and $frontendStarted) {
-        Write-Log "All servers started successfully"
+    if ($serverStarted) {
+        Write-Log "Server started successfully"
         Write-Host ""
-        Write-Host "Servers started! Use .\manage_servers.ps1 -Status to check status." -ForegroundColor Green
-        Write-Host "Frontend URL: http://localhost:$FrontendPort/frontend/task_page_example.html" -ForegroundColor Cyan
+        Write-Host "Server started! Use .\manage_servers.ps1 -Status to check status." -ForegroundColor Green
+        Write-Host "Frontend URL: http://localhost:$ApiPort/frontend/task_page_example.html" -ForegroundColor Cyan
         Write-Host "API URL: http://localhost:$ApiPort" -ForegroundColor Cyan
         Write-Host "API Docs: http://localhost:$ApiPort/docs" -ForegroundColor Cyan
     } else {
-        Write-Log "Some servers failed to start" "ERROR"
+        Write-Log "Server failed to start" "ERROR"
         exit 1
     }
 }
@@ -217,19 +185,19 @@ if ($Status) {
     Stop-AllServers
     Check-Status
 } elseif ($Restart) {
-    Write-Log "Restarting all servers..."
+    Write-Log "Restarting server..."
     Stop-AllServers
     Start-Sleep -Seconds 2
     Start-AllServers
 } else {
-    # Default action: start servers
+    # Default action: start server
     Write-Host "Planner Agent Server Management Tool" -ForegroundColor Cyan
     Write-Host ""
     Write-Host "Usage:" -ForegroundColor Yellow
-    Write-Host "  .\manage_servers.ps1              - Start both servers"
+    Write-Host "  .\manage_servers.ps1              - Start server"
     Write-Host "  .\manage_servers.ps1 -Status       - Check server status"
-    Write-Host "  .\manage_servers.ps1 -Stop         - Stop all servers"
-    Write-Host "  .\manage_servers.ps1 -Restart      - Restart all servers"
+    Write-Host "  .\manage_servers.ps1 -Stop         - Stop server"
+    Write-Host "  .\manage_servers.ps1 -Restart      - Restart server"
     Write-Host ""
 
     Start-AllServers

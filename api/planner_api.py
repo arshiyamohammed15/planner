@@ -5,6 +5,7 @@ import sys
 from typing import Dict, List, Optional
 from uuid import uuid4
 
+
 # Ensure environment variables are set if not already present
 # This helps when the API is started without the PowerShell script
 if not os.environ.get("POSTGRES_PASSWORD") and os.environ.get("POSTGRES_USER") == "postgres":
@@ -468,7 +469,7 @@ planner_agent = PlannerAgent()
 # Allow access to health check, token generation, and API documentation endpoints without authentication
 register_auth_middleware(app, allow_paths={
     "/health", "/token", "/docs", "/openapi.json", "/redoc",
-    "/tasks", "/tasks/*", "/plans", "/plans/*"
+    "/frontend", "/frontend/*"
 })
 
 # CORS configuration — adjust origins as needed
@@ -485,9 +486,6 @@ else:
         "http://127.0.0.1:3000",
         "http://127.0.0.1:8080",
     ]
-
-# Mount static files
-app.mount("/frontend", StaticFiles(directory="frontend"), name="frontend")
 
 app.add_middleware(
     CORSMiddleware,
@@ -1242,6 +1240,19 @@ def get_coverage_analysis(plan_id: str) -> CoverageAnalysisResponse:
         raise HTTPException(status_code=500, detail=f"Failed to analyze coverage: {str(exc)}") from exc
     finally:
         session.close()
+
+
+# Serve static files via API routes (allows them to work with auth middleware)
+from fastapi.responses import FileResponse
+import os
+
+@app.get("/frontend/{path:path}")
+def serve_frontend(path: str):
+    """Serve frontend static files."""
+    file_path = os.path.join("frontend", path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return FileResponse(file_path)
+    return {"error": "File not found"}
 
 
 # If running directly: uvicorn api.planner_api:app --reload

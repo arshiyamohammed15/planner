@@ -8,7 +8,7 @@
 // Configuration
 const API_BASE_URL = window.API_BASE_URL || 'http://localhost:8080';
 const CURRENT_USER = window.CURRENT_USER || 'mk'; // Set this from your auth system
-const JWT_TOKEN = window.JWT_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtayIsImlhdCI6MTc2OTA4NTQxMywiZXhwIjoxNzY5MDg5MDEzfQ.yPTlrJiHozhXkwnB56oh6EcYR8YLEUpRfnhnr0-npYY';
+const JWT_TOKEN = window.JWT_TOKEN || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtayIsImlhdCI6MTc2OTA4NzM4MywiZXhwIjoxNzY5MDkwOTgzfQ.HaWJu1CSmFxCE9dGSgqslCf0I-K-piC-HgL93oFmLGA';
 
 /**
  * Fetch task details including comments from the API

@@ -88,9 +88,6 @@ def register_auth_middleware(
                 break
 
         # Debug logging
-        if not path_allowed and "tasks" in request.url.path:
-            print(f"DEBUG: Path '{request.url.path}' not allowed. Allowed patterns: {allowed}")
-
         if path_allowed:
             return await call_next(request)
 
