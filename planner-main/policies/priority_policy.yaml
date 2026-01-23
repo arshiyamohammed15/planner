@@ -1,0 +1,15 @@
+# Priority Policy Configuration
+# Defines the priority order for test types in plan generation
+# Higher values = higher priority (executed first when dependencies allow)
+
+priorities:
+  e2e: 5
+  integration: 4
+  security: 4
+  performance: 3
+  exploratory: 2
+  unit: 1
+
+# Default priority for test types not listed above
+default_priority: 0
+

@@ -1,0 +1,261 @@
+{
+  "valid_requests": {
+    "plan_basic": {
+      "goal": "Ensure secure user authentication and authorization flows work correctly",
+      "feature": "User Authentication",
+      "constraints": [
+        "Must comply with OAuth 2.0 standards",
+        "Rate limiting: 5 attempts per minute",
+        "Password must meet security requirements"
+      ],
+      "owner": "security-team",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_complex": {
+      "goal": "Verify payment processing reliability and accuracy",
+      "feature": "Payment Processing",
+      "constraints": [
+        "PCI DSS compliance required",
+        "Support multiple payment gateways",
+        "Handle currency conversion"
+      ],
+      "owner": "payment-team",
+      "template_name": "complex",
+      "save_to_database": true
+    },
+    "plan_minimal": {
+      "goal": "Validate search accuracy and performance",
+      "feature": "Search",
+      "constraints": [
+        "Response time < 200ms",
+        "Support fuzzy matching"
+      ],
+      "owner": "search-team",
+      "template_name": "minimal",
+      "save_to_database": true
+    },
+    "plan_full_coverage": {
+      "goal": "Ensure shopping cart functionality works flawlessly",
+      "feature": "Shopping Cart",
+      "constraints": [
+        "Handle concurrent users",
+        "Support multiple currencies",
+        "Inventory synchronization required"
+      ],
+      "owner": "ecommerce-team",
+      "template_name": "full_coverage",
+      "save_to_database": true
+    },
+    "plan_default": {
+      "goal": "Test API endpoint reliability",
+      "feature": "API Endpoints",
+      "constraints": null,
+      "owner": "backend-team",
+      "save_to_database": true
+    },
+    "plan_with_empty_constraints": {
+      "goal": "Test empty constraints handling",
+      "feature": "Test Feature",
+      "constraints": [],
+      "owner": "test-team",
+      "template_name": "basic",
+      "save_to_database": false
+    },
+    "plan_unicode": {
+      "goal": "测试中文字符处理 Test Unicode 中文 العربية",
+      "feature": "Unicode Feature 测试",
+      "constraints": [
+        "支持多语言 Support multiple languages"
+      ],
+      "owner": "i18n-team",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_special_chars": {
+      "goal": "Test special characters: !@#$%^&*()_+-=[]{}|;':\",./<>?",
+      "feature": "Special-Chars_Feature@123",
+      "constraints": [
+        "Must handle: <script>alert('test')</script>",
+        "Email format: user@example.com",
+        "URL: https://example.com/path?param=value"
+      ],
+      "owner": "test-team",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_long_strings": {
+      "goal": "This is a very long goal string that exceeds normal length expectations. Generate 500 'A' characters here. End of long string.",
+      "feature": "Long Feature Name - Generate 200 'B' characters here",
+      "constraints": [
+        "Constraint 1: Generate 300 'C' characters here",
+        "Constraint 2: Generate 300 'D' characters here"
+      ],
+      "owner": "test-team",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "assign_task": {
+      "task_id": "plan-abc12345-task-1",
+      "owner": "developer"
+    },
+    "add_comment": {
+      "user": "test-user",
+      "comment_text": "This is a test comment for validation"
+    },
+    "add_comment_long": {
+      "user": "test-user",
+      "comment_text": "This is a very long comment. Generate 1000 'X' characters here. End of long comment.",
+      "note": "For actual testing, replace placeholder text with actual long string (1000+ characters)"
+    },
+    "add_comment_xss": {
+      "user": "test-user",
+      "comment_text": "<script>alert('XSS')</script>Hello World"
+    }
+  },
+  "invalid_requests": {
+    "plan_missing_goal": {
+      "feature": "User Authentication",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_missing_feature": {
+      "goal": "Ensure secure authentication",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_blank_goal": {
+      "goal": "",
+      "feature": "User Authentication",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_blank_goal_whitespace": {
+      "goal": "   ",
+      "feature": "User Authentication",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_blank_feature": {
+      "goal": "Ensure secure authentication",
+      "feature": "",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_blank_feature_whitespace": {
+      "goal": "Ensure secure authentication",
+      "feature": "   ",
+      "template_name": "basic",
+      "save_to_database": true
+    },
+    "plan_invalid_template": {
+      "goal": "Test invalid template",
+      "feature": "Test Feature",
+      "template_name": "invalid_template_name",
+      "save_to_database": true
+    },
+    "assign_task_missing_task_id": {
+      "owner": "developer"
+    },
+    "assign_task_missing_owner": {
+      "task_id": "plan-abc12345-task-1"
+    },
+    "assign_task_invalid_task_id": {
+      "task_id": "non-existent-task-id",
+      "owner": "developer"
+    },
+    "add_comment_missing_user": {
+      "comment_text": "Test comment"
+    },
+    "add_comment_missing_text": {
+      "user": "test-user"
+    },
+    "add_comment_blank_user": {
+      "user": "",
+      "comment_text": "Test comment"
+    },
+    "add_comment_blank_text": {
+      "user": "test-user",
+      "comment_text": ""
+    },
+    "add_comment_invalid_task": {
+      "user": "test-user",
+      "comment_text": "Test comment",
+      "_task_id": "non-existent-task-id"
+    }
+  },
+  "test_scenarios": {
+    "workflow_complete": {
+      "description": "Complete workflow from plan generation to task completion",
+      "steps": [
+        "generate_token",
+        "create_plan_complex",
+        "get_plan_details",
+        "list_plan_tasks",
+        "get_task_details",
+        "add_comment",
+        "assign_task_manual",
+        "assign_task_auto",
+        "list_tasks_filtered",
+        "get_comments"
+      ]
+    },
+    "multiple_plans": {
+      "description": "Create and manage multiple plans",
+      "steps": [
+        "create_plan_basic",
+        "create_plan_complex",
+        "list_tasks_plan1",
+        "list_tasks_plan2",
+        "verify_associations"
+      ]
+    },
+    "task_assignment_workflow": {
+      "description": "Test task assignment scenarios",
+      "steps": [
+        "create_plan",
+        "get_all_tasks",
+        "auto_assign_all_tasks",
+        "verify_assignments",
+        "reassign_manually",
+        "verify_updates"
+      ]
+    }
+  },
+  "performance_tests": {
+    "sequential_plans": {
+      "count": 10,
+      "template": "basic",
+      "description": "Generate 10 plans sequentially"
+    },
+    "concurrent_plans": {
+      "count": 10,
+      "template": "basic",
+      "description": "Generate 10 plans concurrently"
+    },
+    "large_plan": {
+      "template": "full_coverage",
+      "description": "Generate plan with full_coverage template"
+    }
+  },
+  "edge_cases": {
+    "sql_injection": {
+      "plan_id": "' OR '1'='1",
+      "description": "SQL injection attempt in query parameter"
+    },
+    "xss_comment": {
+      "comment_text": "<script>alert('XSS')</script>",
+      "description": "XSS attempt in comment"
+    },
+    "unicode_input": {
+      "goal": "测试中文 日本語 العربية",
+      "feature": "Unicode Feature",
+      "description": "Unicode characters in input"
+    },
+    "very_large_constraints": {
+      "description": "Array with 100 constraints",
+      "note": "Generate 100 constraint strings programmatically: ['Constraint 0', 'Constraint 1', ..., 'Constraint 99']"
+    }
+  }
+}
+

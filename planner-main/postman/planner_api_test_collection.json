@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Planner API Tests",
+    "_postman_id": "b3f1c6c2-4b4c-4c7c-9f3b-6c0fa5a1e111",
+    "description": "Postman collection to exercise Planner Agent API endpoints (/health, /plan, /assign_task) with JWT auth.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{base_url}}/health"
+      },
+      "response": []
+    },
+    {
+      "name": "Generate Plan",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"goal\": \"Ensure checkout flow reliability\",\n  \"feature\": \"Checkout\",\n  \"constraints\": [\"PCI compliance\", \"limited staging data\"],\n  \"owner\": \"qa-team\"\n}"
+        },
+        "url": "{{base_url}}/plan"
+      },
+      "response": []
+    },
+    {
+      "name": "Assign Task",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"task_id\": \"task-1\",\n  \"owner\": \"qa-engineer\"\n}"
+        },
+        "url": "{{base_url}}/assign_task"
+      },
+      "response": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000"
+    },
+    {
+      "key": "token",
+      "value": "REPLACE_WITH_JWT"
+    }
+  ]
+}
+

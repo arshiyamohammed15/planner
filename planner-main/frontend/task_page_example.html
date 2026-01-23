@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Planner Agent</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background-color: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .success {
+            background-color: #efe;
+            border: 1px solid #cfc;
+            color: #3c3;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .plan-item {
+            background: #f9f9f9;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+
+        .plan-item h3 {
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .plan-item p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .plan-item .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-top: 8px;
+        }
+
+        .plan-summary {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 6px;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .plan-summary strong {
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 AI Planner Agent</h1>
+            <p>Generate intelligent test plans in seconds</p>
+        </div>
+
+        <div class="main-content">
+            <!-- Plan Request Form -->
+            <div class="card">
+                <h2>📋 Create a Plan</h2>
+                
+                <div id="error-message" class="error" style="display: none;"></div>
+                <div id="success-message" class="success" style="display: none;"></div>
+
+                <div class="form-group">
+                    <label for="goal">Goal *</label>
+                    <textarea id="goal" placeholder="e.g., Test user authentication flow" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="feature">Feature *</label>
+                    <textarea id="feature" placeholder="e.g., Login module with OAuth support" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="constraints">Constraints (Optional)</label>
+                    <textarea id="constraints" placeholder="e.g., Must complete within 2 days, Limited resources"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="template">Template</label>
+                    <select id="template">
+                        <option value="default">Default Template</option>
+                        <option value="regression">Regression Testing</option>
+                        <option value="integration">Integration Testing</option>
+                        <option value="performance">Performance Testing</option>
+                    </select>
+                </div>
+
+                <button id="generateBtn" onclick="generatePlan()">Generate Plan</button>
+            </div>
+
+            <!-- Quick Info -->
+            <div class="card">
+                <h2>ℹ️ About</h2>
+                <p style="color: #666; line-height: 1.8;">
+                    The AI Planner Agent creates intelligent test plans based on:
+                </p>
+                <ul style="color: #666; line-height: 1.8; margin-left: 20px; margin-top: 10px;">
+                    <li><strong>Your Goal:</strong> What you want to achieve</li>
+                    <li><strong>Your Feature:</strong> What you're testing</li>
+                    <li><strong>Templates:</strong> Predefined testing strategies</li>
+                    <li><strong>Policies:</strong> Priority and assignment rules</li>
+                </ul>
+                <p style="color: #666; line-height: 1.8; margin-top: 15px;">
+                    Each plan includes task breakdown, dependencies, and estimated effort.
+                </p>
+                <div style="margin-top: 20px; padding: 15px; background: #f0f4ff; border-radius: 6px;">
+                    <strong style="color: #667eea;">Status:</strong> <span style="color: #3c3;">✓ API Connected</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results" id="results-section" style="display: none;">
+            <h2>📊 Generated Plan</h2>
+            <div id="plan-summary" class="plan-summary"></div>
+            <div id="plan-tasks"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        let accessToken = null;
+
+        // Initialize - get access token
+        async function initializeApp() {
+            try {
+                console.log('Initializing app, connecting to:', API_BASE_URL);
+                
+                const response = await fetch(`${API_BASE_URL}/token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        subject: 'planner-ui-user',
+                        expires_minutes: 120
+                    })
+                });
+
+                console.log('Token response status:', response.status);
+
+                if (response.ok) {
+                    const data = await response.json();
+                    accessToken = data.access_token;
+                    console.log('Authentication successful, token obtained');
+                } else {
+                    let errorMsg = 'Could not get access token';
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.detail || errorMsg;
+                    } catch (e) {
+                        console.log('Could not parse token error response');
+                    }
+                    showError('Failed to initialize: ' + errorMsg);
+                    console.error('Token request failed with status:', response.status);
+                }
+            } catch (error) {
+                let errorMsg = 'Connection error';
+                if (error instanceof TypeError && error.message.includes('fetch')) {
+                    errorMsg = 'Cannot connect to API server. Make sure the server is running on port 8000.';
+                } else if (error instanceof Error) {
+                    errorMsg += ': ' + error.message;
+                }
+                showError(errorMsg);
+                console.error('Initialization error:', error);
+            }
+        }
+
+        async function generatePlan() {
+            const goal = document.getElementById('goal').value.trim();
+            const feature = document.getElementById('feature').value.trim();
+            const constraints = document.getElementById('constraints').value.trim();
+            const template = document.getElementById('template').value;
+
+            // Validation
+            if (!goal) {
+                showError('Please enter a goal');
+                return;
+            }
+            if (!feature) {
+                showError('Please enter a feature');
+                return;
+            }
+
+            // Clear previous messages
+            clearMessages();
+
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading"><div class="spinner"></div> Generating Plan...</div>';
+
+            try {
+                // Validate token
+                if (!accessToken) {
+                    throw new Error('Authentication failed: No access token. Please refresh the page.');
+                }
+
+                const payload = {
+                    goal,
+                    feature
+                };
+                
+                // Add constraints if provided
+                if (constraints) {
+                    payload.constraints = [constraints];
+                }
+                
+                // Add template if not default
+                if (template && template !== 'default') {
+                    payload.template_name = template;
+                }
+
+                console.log('Sending payload:', payload);
+
+                const response = await fetch(`${API_BASE_URL}/plan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                console.log('Response status:', response.status);
+
+                // Handle error responses
+                if (!response.ok) {
+                    let errorMessage = `Server error (${response.status})`;
+                    let responseText = '';
+                    
+                    try {
+                        responseText = await response.text();
+                        console.log('Raw response:', responseText);
+                        
+                        if (responseText) {
+                            const errorData = JSON.parse(responseText);
+                            errorMessage = errorData.detail || errorData.message || errorMessage;
+                        }
+                    } catch (parseError) {
+                        console.log('Could not parse error response:', parseError);
+                        if (responseText) {
+                            errorMessage = responseText.substring(0, 200);
+                        }
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+
+                let planData;
+                try {
+                    planData = await response.json();
+                    console.log('Plan data received:', planData);
+                } catch (parseError) {
+                    console.error('Failed to parse plan response:', parseError);
+                    throw new Error('Failed to parse server response. The response format was invalid.');
+                }
+
+                // Validate plan data
+                if (!planData || !planData.plan_id) {
+                    throw new Error('Invalid plan data received from server');
+                }
+
+                displayPlan(planData);
+                showSuccess('Plan generated successfully!');
+
+            } catch (error) {
+                let errorMsg = 'Unknown error occurred';
+                
+                // Extract error message from various error types
+                if (error instanceof TypeError && error.message.includes('fetch')) {
+                    errorMsg = 'Network error: Could not connect to API. Ensure the API server is running on port 8000.';
+                } else if (error instanceof Error) {
+                    errorMsg = error.message;
+                } else if (typeof error === 'string') {
+                    errorMsg = error;
+                } else if (error && typeof error === 'object') {
+                    // Try to safely extract message from object
+                    errorMsg = error.detail || error.message || String(error);
+                    if (errorMsg === '[object Object]') {
+                        errorMsg = 'Server returned an invalid response. Check console for details.';
+                    }
+                }
+                
+                showError('Error: ' + errorMsg);
+                console.error('Full error object:', error);
+                console.error('Error type:', typeof error);
+                if (error instanceof Error) {
+                    console.error('Error stack:', error.stack);
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Generate Plan';
+            }
+        }
+
+        function displayPlan(planData) {
+            const resultsSection = document.getElementById('results-section');
+            const summaryDiv = document.getElementById('plan-summary');
+            const tasksDiv = document.getElementById('plan-tasks');
+
+            // Display summary with safe defaults
+            const totalTasks = planData.total_tasks || (planData.tasks ? planData.tasks.length : 0);
+            const status = planData.status || 'completed';
+            const createdAt = planData.created_at ? new Date(planData.created_at).toLocaleString() : new Date().toLocaleString();
+            
+            summaryDiv.innerHTML = `
+                <strong>Plan ID:</strong> ${planData.plan_id}<br>
+                <strong>Total Tasks:</strong> ${totalTasks}<br>
+                <strong>Status:</strong> ${status}<br>
+                <strong>Generated:</strong> ${createdAt}
+            `;
+
+            // Display tasks
+            tasksDiv.innerHTML = '';
+            if (planData.tasks && planData.tasks.length > 0) {
+                planData.tasks.forEach((task, index) => {
+                    const taskHTML = `
+                        <div class="plan-item">
+                            <h3>${index + 1}. ${task.description}</h3>
+                            <p><strong>Type:</strong> ${task.test_type}</p>
+                            <p><strong>Status:</strong> ${task.status || 'pending'}</p>
+                            <span class="badge">${task.test_type}</span>
+                        </div>
+                    `;
+                    tasksDiv.innerHTML += taskHTML;
+                });
+            } else {
+                tasksDiv.innerHTML = '<p style="color: #666;">No tasks generated for this plan.</p>';
+            }
+
+            resultsSection.style.display = 'block';
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success-message');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function clearMessages() {
+            document.getElementById('error-message').style.display = 'none';
+            document.getElementById('success-message').style.display = 'none';
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', initializeApp);
+    </script>
+</body>
+</html>
+

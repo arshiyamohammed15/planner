@@ -1,0 +1,15 @@
+# Validation Policy Configuration
+# Defines validation rules for API inputs
+
+# Minimum length requirements
+min_goal_length: 1
+min_feature_length: 1
+
+# Required fields (must be present and non-empty)
+required_fields:
+  - goal
+  - feature
+
+# Maximum number of constraints allowed (null = unlimited)
+max_constraints: null
+

@@ -1,0 +1,353 @@
+{
+  "dashboard": {
+    "title": "Test Coverage Dashboard",
+    "tags": [
+      "coverage",
+      "testing",
+      "metrics"
+    ],
+    "timezone": "browser",
+    "schemaVersion": 27,
+    "version": 0,
+    "refresh": "10s",
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": {
+          "x": 0,
+          "y": 0,
+          "w": 6,
+          "h": 4
+        },
+        "type": "gauge",
+        "title": "Current Coverage Percentage",
+        "targets": [
+          {
+            "expr": "test_coverage_percentage",
+            "refId": "A",
+            "legendFormat": "{{test_suite}} - {{branch}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "red"
+                },
+                {
+                  "value": 70,
+                  "color": "yellow"
+                },
+                {
+                  "value": 80,
+                  "color": "green"
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "orientation": "auto",
+          "reduceOptions": {
+            "values": false,
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": ""
+          },
+          "showThresholdLabels": false,
+          "showThresholdMarkers": true
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": {
+          "x": 6,
+          "y": 0,
+          "w": 12,
+          "h": 4
+        },
+        "type": "timeseries",
+        "title": "Coverage Trend Over Time",
+        "targets": [
+          {
+            "expr": "test_coverage_percentage",
+            "refId": "A",
+            "legendFormat": "{{test_suite}} - {{branch}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "red"
+                },
+                {
+                  "value": 70,
+                  "color": "yellow"
+                },
+                {
+                  "value": 80,
+                  "color": "green"
+                }
+              ]
+            }
+          }
+        },
+        "options": {
+          "tooltip": {
+            "mode": "multi"
+          },
+          "legend": {
+            "displayMode": "table",
+            "placement": "bottom"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": {
+          "x": 18,
+          "y": 0,
+          "w": 6,
+          "h": 4
+        },
+        "type": "barchart",
+        "title": "Covered vs Missing Lines",
+        "targets": [
+          {
+            "expr": "test_coverage_covered_lines",
+            "refId": "A",
+            "legendFormat": "Covered"
+          },
+          {
+            "expr": "test_coverage_missing_lines",
+            "refId": "B",
+            "legendFormat": "Missing"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "custom": {
+              "displayMode": "gradient",
+              "orientation": "horizontal"
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": {
+          "x": 0,
+          "y": 4,
+          "w": 6,
+          "h": 3
+        },
+        "type": "stat",
+        "title": "Total Lines of Code",
+        "targets": [
+          {
+            "expr": "test_coverage_total_lines",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        },
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": {
+          "x": 6,
+          "y": 4,
+          "w": 6,
+          "h": 3
+        },
+        "type": "gauge",
+        "title": "Branch Coverage",
+        "targets": [
+          {
+            "expr": "test_coverage_branch_coverage",
+            "refId": "A",
+            "legendFormat": "{{test_suite}} - {{branch}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "min": 0,
+            "max": 100,
+            "unit": "percent",
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "value": 0,
+                  "color": "red"
+                },
+                {
+                  "value": 70,
+                  "color": "yellow"
+                },
+                {
+                  "value": 80,
+                  "color": "green"
+                }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 6,
+        "gridPos": {
+          "x": 12,
+          "y": 4,
+          "w": 6,
+          "h": 3
+        },
+        "type": "stat",
+        "title": "Coverage Trend",
+        "targets": [
+          {
+            "expr": "test_coverage_trend",
+            "refId": "A"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {
+                "type": "value",
+                "options": {
+                  "0": {
+                    "text": "Stable",
+                    "color": "blue"
+                  },
+                  "1": {
+                    "text": "Increasing",
+                    "color": "green"
+                  },
+                  "-1": {
+                    "text": "Decreasing",
+                    "color": "red"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "options": {
+          "graphMode": "none",
+          "colorMode": "value"
+        }
+      },
+      {
+        "id": 7,
+        "gridPos": {
+          "x": 18,
+          "y": 4,
+          "w": 6,
+          "h": 3
+        },
+        "type": "table",
+        "title": "Coverage by Test Suite",
+        "targets": [
+          {
+            "expr": "test_coverage_percentage",
+            "refId": "A",
+            "format": "table",
+            "instant": true
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "custom": {
+              "displayMode": "color-background"
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": {
+          "x": 0,
+          "y": 7,
+          "w": 12,
+          "h": 4
+        },
+        "type": "timeseries",
+        "title": "Coverage Change Over Time",
+        "targets": [
+          {
+            "expr": "test_coverage_percentage - test_coverage_percentage offset 1h",
+            "refId": "A",
+            "legendFormat": "Change (1h)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "color": {
+              "mode": "palette-classic"
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "gridPos": {
+          "x": 12,
+          "y": 7,
+          "w": 12,
+          "h": 4
+        },
+        "type": "stat",
+        "title": "Last Updated",
+        "targets": [
+          {
+            "expr": "test_coverage_last_updated_timestamp",
+            "refId": "A",
+            "format": "time_series"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "dateTimeFromNow"
+          }
+        },
+        "options": {
+          "graphMode": "none"
+        }
+      }
+    ]
+  },
+  "overwrite": false,
+  "folderId": null
+}

@@ -1,0 +1,16 @@
+database:
+  user: ${POSTGRES_USER:-postgres}
+  password: ${POSTGRES_PASSWORD:-postgres}
+  host: ${POSTGRES_HOST:-localhost}
+  port: ${POSTGRES_PORT:-5432}
+  dbname: ${POSTGRES_DB:-planner}
+  url: ${DATABASE_URL:-""}
+
+api_keys:
+  service1: ${SERVICE1_API_KEY:-""}
+  service2: ${SERVICE2_API_KEY:-""}
+
+env:
+  app_env: ${APP_ENV:-development}
+  sqlalchemy_echo: ${SQLALCHEMY_ECHO:-""}
+
