@@ -1,0 +1,17 @@
+# Assignment Policy Configuration
+# Defines how tasks are assigned to team members based on test type
+
+# Mapping of test types to roles
+# Test type names should be lowercase (unit, integration, e2e, etc.)
+role_map:
+  unit: developer
+  integration: developer
+  e2e: tester
+  exploratory: tester
+  performance: performance
+  security: security
+
+# Default role to assign if test type is not found in role_map
+# Set to null to leave unassigned if not found
+default_role: null
+

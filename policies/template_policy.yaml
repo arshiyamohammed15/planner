@@ -1,0 +1,15 @@
+# Template Policy Configuration
+# Defines template selection rules and defaults
+
+# Default template to use if none specified in request
+default_template: basic
+
+# Template selection rules based on conditions
+# Format: condition_name: template_name
+# These can be used for automatic template selection based on feature characteristics
+template_selection_rules:
+  high_risk: full_coverage
+  quick_test: minimal
+  standard: basic
+  comprehensive: complex
+

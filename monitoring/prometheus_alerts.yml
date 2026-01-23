@@ -1,0 +1,34 @@
+groups:
+  - name: test-coverage-alerts
+    interval: 1m
+    rules:
+      - alert: LowTestCoverage
+        expr: test_coverage_percentage < 80
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Test coverage has dropped below 80%"
+          description: "Test coverage is currently {{ $value }}%, which is below the 80% threshold. Branch: {{ $labels.branch }}, Test Suite: {{ $labels.test_suite }}"
+      
+      - alert: CriticalTestCoverage
+        expr: test_coverage_percentage < 70
+        for: 2m
+        labels:
+          severity: critical
+          team: engineering
+        annotations:
+          summary: "Test coverage has dropped below 70% (CRITICAL)"
+          description: "Test coverage is critically low at {{ $value }}%. Immediate action required. Branch: {{ $labels.branch }}, Test Suite: {{ $labels.test_suite }}"
+      
+      - alert: CoverageDropDetected
+        expr: (test_coverage_percentage - test_coverage_percentage offset 1h) < -5
+        for: 5m
+        labels:
+          severity: warning
+          team: engineering
+        annotations:
+          summary: "Significant coverage drop detected"
+          description: "Coverage has dropped by more than 5% in the last hour. Current: {{ $value }}%, Previous: {{ $labels.previous }}%"
+
